@@ -17,6 +17,7 @@ to how I want the Snakes game to work.
     * Blue = 3
 * Multiple Blockis Can spawn
 * Red Blocks have a lifetime (min 1 second)
+* Blocks can not spawn on or adjacent to other blocks
 
 
 To end the environment F1 to call game over.
