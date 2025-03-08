@@ -19,6 +19,7 @@ TARGET = $(TRG_DIR)/blocks
 # Src files
 #
 SRC = $(SRC_DIR)/blocks.cpp 
+SRC += $(SRC_DIR)/engine.cpp 
 
 #
 # Link against libs

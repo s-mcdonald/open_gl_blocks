@@ -31,6 +31,8 @@
 
 #include <iostream>
 
+#include "engine.h"
+
 /**
  * Game environment constants.
  */
@@ -68,6 +70,8 @@ typedef struct GameState {
 
 int main(int argc, char** argv) {
 
-    std::cout << "Game Started\n";
+    SamMcDonald::Blocks::doStartGame();
+
+    SamMcDonald::Blocks::doGameOver();
 
 }
