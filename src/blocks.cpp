@@ -31,47 +31,57 @@
 
 #include <iostream>
 
+#include <GL/glut.h>
+
 #include "engine.h"
+#include "types.h"
 
 /**
  * Game environment constants.
  */
-const int WIDTH = 800;
-const int HEIGHT = 600;
+// static const int WIDTH = 800;
+// static const int HEIGHT = 600;
 
 const char* game_title = "Blocks";
 
-/**
- * The point struct to help us identify 
- * where to spawn blocks ect.
- */
-typedef struct Point {
-    int x, y;
-} Point;
 
 
-/**
- * The point struct to help us identify 
- * where to spawn blocks ect.
- */
-typedef struct Block {
-    Point xy;
-    short value;
-} Block;
+// initial the game state ;;
+GameState gameState;
 
-/**
- * The point struct to help us identify 
- * where to spawn blocks ect.
- */
-typedef struct GameState {
-    bool game_over = false;
-} GameState;
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (gameState.game_over) {
+        SamMcDonald::Blocks::doGameOver();
+        glutSwapBuffers();
+        return;
+    }
+
+    // still need to call this if not game over for now.
+    glutSwapBuffers();
+}
 
 
 int main(int argc, char** argv) {
 
     SamMcDonald::Blocks::doStartGame();
 
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(WIDTH, HEIGHT);
+    glutCreateWindow(game_title);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, WIDTH, 0, HEIGHT);
+
+    glutDisplayFunc(display);
+
+    glutMainLoop();
+
+
     SamMcDonald::Blocks::doGameOver();
 
+    //return 0; // auto return
 }
