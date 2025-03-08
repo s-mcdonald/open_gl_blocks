@@ -7,6 +7,12 @@
 
 namespace SamMcDonald::Blocks {
 
+    void doClearScreen()
+    {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
     void doStartGame()
     {
         std::cout << "Game Started" << std::endl;
@@ -22,6 +28,20 @@ namespace SamMcDonald::Blocks {
         p.y = HEIGHT / 2;
         doDrawText("Game Over", p);
     }
+
+    void doSpawnBlock(Point p)
+    {
+        glColor3f(1.0f, 0.0f, 0.0f);
+
+        glBegin(GL_QUADS);
+        glVertex2i(p.x, p.y);
+        glVertex2i(p.x + BLOCK_SIZE, p.y);
+        glVertex2i(p.x + BLOCK_SIZE, p.y + BLOCK_SIZE);
+        glVertex2i(p.x, p.y + BLOCK_SIZE);
+        glEnd();
+        glutSwapBuffers();
+    }
+
 
     void doDrawText(const char* text, Point p) {
         glRasterPos2i(p.x, p.y);

@@ -7,10 +7,13 @@
 
 namespace SamMcDonald::Blocks {
 
-    
+    void doClearScreen();
+
     void doStartGame();
 
     void doGameOver();
+
+    void doSpawnBlock(Point p);
 
     /**
      * Use oGL to display text on screen ;;

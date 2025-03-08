@@ -38,12 +38,13 @@
 #include "types.h"
 #include "constants.h"
 
-
 // initial the game state ;;
 GameState gameState;
 short game_execution_time = 0;
 
 void display() {
+    // Refresh the screen buffer
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     if (gameState.game_over) {
@@ -55,37 +56,67 @@ void display() {
     // we need a new calc for center, need to take into
     // account the length of the text. Text size could
     // prob do with change also as screen is resized.
-    Point p;
-    p.x = WIDTH / 2 - 50;
-    p.y = HEIGHT / 2;
+    Point p_center_screen;
+    p_center_screen.x = WIDTH / 2 - 50;
+    p_center_screen.y = HEIGHT / 2;
 
-    // Game window is showing but no text on screen yet, thats because
-    // the game is not over and we have nothing to render.
-    // While I dev, ill print some text to the screen.
-    // In the GameState we can add a new flag "game_started"
-    if (gameState.game_started) {
-        SamMcDonald::Blocks::doDrawText("Game has started", p);
-    } else {
-        SamMcDonald::Blocks::doDrawText("Game not started", p);
+    // game not started
+    if (gameState.game_started == false && gameState.game_over == false) {
+        glColor3f(0.0f, 1.0f, 0.0f);
+        SamMcDonald::Blocks::doDrawText("Press any key to begin", p_center_screen);
+        glutSwapBuffers();
+        return;
     }
 
-    // still need to call this if not game over for now.
-    glutSwapBuffers();
+    // in game play here
+    if (gameState.game_started && gameState.game_over == false) {
+        SamMcDonald::Blocks::doDrawText("Game has started", p_center_screen);
+        Point p;
+        p.x = 140;
+        p.x = 150;
+        SamMcDonald::Blocks::doSpawnBlock(p);
+        glutSwapBuffers();
+        return;
+    }
+
+    // Game ended
+    if (gameState.game_started && gameState.game_over == true) {
+        glColor3f(1.0f, 0.0f, 0.0f);
+        SamMcDonald::Blocks::doDrawText("Game Over", p_center_screen);
+        glutSwapBuffers();
+        return;
+    }
+
+    SamMcDonald::Blocks::doDrawText("This is something else", p_center_screen);
 }
 
 /**
- * Prob only useful for dev. This will timeout
- * the clock so we can end the game.
+ * Simple tim control to control if game is working for dev only.alignas.
+ * Only need this until we havegame motion.
  */
 void game_timer(int value) {
     game_execution_time++;
-    if (game_execution_time >= 3) {
+
+    if (game_execution_time < 2) {
+        gameState.game_started = false;
+        gameState.game_over = false;
+    } else if (game_execution_time >= 2 && game_execution_time < 7) {
+        gameState.game_started = true;
+        gameState.game_over = false;
+    } 
+    else if (game_execution_time >= 7) {
+        gameState.game_started = true;
         gameState.game_over = true;
-        SamMcDonald::Blocks::doGameOver();
-        glutSwapBuffers();
-    } else {
-        glutTimerFunc(1000, game_timer, 0);
     }
+
+
+    // still need to call this if not game over for now.
+    //glutSwapBuffers();
+
+    // Request to refresh the display
+    glutPostRedisplay();
+
+    glutTimerFunc(1000, game_timer, 0);
 }
 
 
@@ -102,12 +133,11 @@ int main(int argc, char** argv) {
     glLoadIdentity();
     gluOrtho2D(0, WIDTH, 0, HEIGHT);
 
-    glutDisplayFunc(display);
-
     glutTimerFunc(GAME_INTERVAL, game_timer, 0);
 
+    glutDisplayFunc(display);
+
     glutMainLoop();
-    
     SamMcDonald::Blocks::doGameOver();
 
     //return 0; // auto return
