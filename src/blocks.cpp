@@ -32,6 +32,7 @@
 #include <iostream>
 
 #include <GL/glut.h>
+#include <ctime>
 
 #include "engine.h"
 #include "types.h"
@@ -40,6 +41,7 @@
 
 // initial the game state ;;
 GameState gameState;
+short game_execution_time = 0;
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -50,27 +52,40 @@ void display() {
         return;
     }
 
+    // we need a new calc for center, need to take into
+    // account the length of the text. Text size could
+    // prob do with change also as screen is resized.
+    Point p;
+    p.x = WIDTH / 2 - 50;
+    p.y = HEIGHT / 2;
+
     // Game window is showing but no text on screen yet, thats because
     // the game is not over and we have nothing to render.
     // While I dev, ill print some text to the screen.
     // In the GameState we can add a new flag "game_started"
     if (gameState.game_started) {
-        Point p;
-        p.x = WIDTH / 2 - 50;
-        p.y = HEIGHT / 2;
         SamMcDonald::Blocks::doDrawText("Game has started", p);
-        glutSwapBuffers();
-        return;
+    } else {
+        SamMcDonald::Blocks::doDrawText("Game not started", p);
     }
-
-
-    Point p;
-    p.x = WIDTH / 2 - 50;
-    p.y = HEIGHT / 2;
-    SamMcDonald::Blocks::doDrawText("Game not started", p);
 
     // still need to call this if not game over for now.
     glutSwapBuffers();
+}
+
+/**
+ * Prob only useful for dev. This will timeout
+ * the clock so we can end the game.
+ */
+void game_timer(int value) {
+    game_execution_time++;
+    if (game_execution_time >= 3) {
+        gameState.game_over = true;
+        SamMcDonald::Blocks::doGameOver();
+        glutSwapBuffers();
+    } else {
+        glutTimerFunc(1000, game_timer, 0);
+    }
 }
 
 
@@ -89,9 +104,10 @@ int main(int argc, char** argv) {
 
     glutDisplayFunc(display);
 
+    glutTimerFunc(GAME_INTERVAL, game_timer, 0);
+
     glutMainLoop();
-
-
+    
     SamMcDonald::Blocks::doGameOver();
 
     //return 0; // auto return
