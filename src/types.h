@@ -27,6 +27,7 @@ typedef struct Block {
  */
 typedef struct GameState {
     bool game_over = false;
+    bool game_started = false;
 } GameState;
 
 #endif /* BLOCKS_TYPES_H */

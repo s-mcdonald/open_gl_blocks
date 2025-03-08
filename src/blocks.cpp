@@ -37,15 +37,6 @@
 #include "types.h"
 #include "constants.h"
 
-/**
- * Game environment constants.
- */
-// static const int WIDTH = 800;
-// static const int HEIGHT = 600;
-
-const char* game_title = "Blocks";
-
-
 
 // initial the game state ;;
 GameState gameState;
@@ -58,6 +49,25 @@ void display() {
         glutSwapBuffers();
         return;
     }
+
+    // Game window is showing but no text on screen yet, thats because
+    // the game is not over and we have nothing to render.
+    // While I dev, ill print some text to the screen.
+    // In the GameState we can add a new flag "game_started"
+    if (gameState.game_started) {
+        Point p;
+        p.x = WIDTH / 2 - 50;
+        p.y = HEIGHT / 2;
+        SamMcDonald::Blocks::doDrawText("Game has started", p);
+        glutSwapBuffers();
+        return;
+    }
+
+
+    Point p;
+    p.x = WIDTH / 2 - 50;
+    p.y = HEIGHT / 2;
+    SamMcDonald::Blocks::doDrawText("Game not started", p);
 
     // still need to call this if not game over for now.
     glutSwapBuffers();
