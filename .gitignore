@@ -1,0 +1,19 @@
+# Ide project files
+/.vscode
+
+
+#
+# Just dont track binaries
+#
+/bin/*
+/bin/**/*
+
+# ensure not main file
+!/src/*.cpp
+
+#
+# Object files
+#
+*.o
+*/**/*.o
+
