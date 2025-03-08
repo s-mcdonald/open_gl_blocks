@@ -35,6 +35,7 @@
 
 #include "engine.h"
 #include "types.h"
+#include "constants.h"
 
 /**
  * Game environment constants.

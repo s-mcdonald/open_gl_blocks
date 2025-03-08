@@ -29,8 +29,4 @@ typedef struct GameState {
     bool game_over = false;
 } GameState;
 
-// Move these to const.h
-static const int WIDTH = 800;
-static const int HEIGHT = 600;
-
 #endif /* BLOCKS_TYPES_H */
