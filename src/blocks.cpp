@@ -38,8 +38,7 @@
 #include "types.h"
 #include "constants.h"
 
-// initial the game state ;;
-GameState gameState;
+
 short game_execution_time = 0;
 
 void display() {
@@ -50,6 +49,7 @@ void display() {
     if (gameState.game_over) {
         SamMcDonald::Blocks::doGameOver();
         glutSwapBuffers();
+        glutPostRedisplay();
         return;
     }
 
@@ -65,6 +65,7 @@ void display() {
         glColor3f(0.0f, 1.0f, 0.0f);
         SamMcDonald::Blocks::doDrawText("Press any key to begin", p_center_screen);
         glutSwapBuffers();
+        glutPostRedisplay();
         return;
     }
 
@@ -76,6 +77,7 @@ void display() {
         p.x = 150;
         SamMcDonald::Blocks::doSpawnBlock(p);
         glutSwapBuffers();
+        glutPostRedisplay();
         return;
     }
 
@@ -88,35 +90,6 @@ void display() {
     }
 
     SamMcDonald::Blocks::doDrawText("This is something else", p_center_screen);
-}
-
-/**
- * Simple tim control to control if game is working for dev only.alignas.
- * Only need this until we havegame motion.
- */
-void game_timer(int value) {
-    game_execution_time++;
-
-    if (game_execution_time < 2) {
-        gameState.game_started = false;
-        gameState.game_over = false;
-    } else if (game_execution_time >= 2 && game_execution_time < 7) {
-        gameState.game_started = true;
-        gameState.game_over = false;
-    } 
-    else if (game_execution_time >= 7) {
-        gameState.game_started = true;
-        gameState.game_over = true;
-    }
-
-
-    // still need to call this if not game over for now.
-    //glutSwapBuffers();
-
-    // Request to refresh the display
-    glutPostRedisplay();
-
-    glutTimerFunc(1000, game_timer, 0);
 }
 
 
@@ -133,9 +106,11 @@ int main(int argc, char** argv) {
     glLoadIdentity();
     gluOrtho2D(0, WIDTH, 0, HEIGHT);
 
-    glutTimerFunc(GAME_INTERVAL, game_timer, 0);
+    // we could introduce this later for time control,
+   // glutTimerFunc(GAME_INTERVAL, game_timer, 0);
 
     glutDisplayFunc(display);
+    glutKeyboardFunc(SamMcDonald::Blocks::handleKeypress); 
 
     glutMainLoop();
     SamMcDonald::Blocks::doGameOver();

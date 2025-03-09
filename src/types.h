@@ -30,4 +30,6 @@ typedef struct GameState {
     bool game_started = false;
 } GameState;
 
+static GameState gameState;
+
 #endif /* BLOCKS_TYPES_H */
