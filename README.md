@@ -1,8 +1,10 @@
 # Blocks ;;
 
-##### Game Engine
-I have decided to turn his project into a mini game engine.
-For now ill keep calling this blocks until I have a better name;;
+My first OpenGL C++ game/game-engine
+
+## Overview
+
+Blocks is a simple game engine built using OpenGL and C++. The engine is designed to render blocks on the screen, with different colors representing different types of blocks (e.g., enemies and friends).
 
 ###### Objectives
 * The game engine will soley focus on block based games
@@ -12,27 +14,16 @@ For now ill keep calling this blocks until I have a better name;;
 * Over time I will decide more features, I know its a bit rough around the edges but a game engine is a good way to learn game dev so thats what ill do!
 
 
+## Screenshot
 
-##### About
-Blocks is my first OpenGL program to help me learn about OGL, rendering and some basic game development using c++.
-I have designed this in such a way I can expand from the initial `Blocks` environment to build the next
-game which will be my version of `Snakes` called `Jungle Python`.
+![Game Engine Screenshot](img/screenshot_a.png)
 
-So Blocks will implement a 2D flat plane in which blocks will spawn.
-To consider the Snakle game on how I want to build it, the Blocks will have a specific behaviour
-to how I want the Snakes game to work.
-
-* Blocks can spawn randomly
-* Blocks can be 1 of 3 colours
-* Each colour containing a value
-    * Red = 1 
-    * Yellow = 2
-    * Blue = 3
-* Multiple Blockis Can spawn
-* Red Blocks have a lifetime (min 1 second)
-* Blocks can not spawn on or adjacent to other blocks
+![Game Engine Screenshot](img/screenshot_b.png)
 
 
-To end the environment F1 to call game over.
+## How It Works
 
-Note that Blocks is not a game, refer to my snakes game.
+The game engine uses OpenGL to render blocks on the screen. 
+Each block can be either a friend or enemy with a score/value.
+
+The game itself can control how many blocks to be rendered at one time. The engine will spawn a random Block by pressing "s" on the keyboard.

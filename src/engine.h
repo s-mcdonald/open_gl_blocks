@@ -45,10 +45,9 @@ namespace SamMcDonald::Blocks {
     ///
     /// Collision Detection
     ///
-    bool pointWillCollide(Point p)
-    {
-        return true;
-    }
+    bool pointWillCollide(Point p);
+
+    void doCollisionAnimation();
 }
 
 #endif /* BLOCKS_ENGINE_H */
