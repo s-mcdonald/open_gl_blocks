@@ -12,6 +12,6 @@ static const int BLOCK_SIZE = 20;
 // this is in seconds
 static const int AUTO_END_GAME_TIMER = 2;
 
-static const char* game_title = "Blocks";
+//static const char* game_title = "Blocks";
 
 #endif /* BLOCKS_CONSTANTS_H */

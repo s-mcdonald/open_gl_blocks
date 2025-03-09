@@ -51,7 +51,7 @@ namespace SamMcDonald::Blocks {
         }
     }
 
-    /**
+        /**
      * GLUT API macro definitions -- the special key codes:
      *
      * GLUT_KEY_F1                        0x0001
@@ -76,37 +76,67 @@ namespace SamMcDonald::Blocks {
      * GLUT_KEY_END                       0x006B
      * GLUT_KEY_INSERT                    0x006C
      */
+
+    void handleSpecialKeypress(int key, int x, int y) {
+
+        std::cout << "Key Pressed: " << key << std::endl;
+
+        // Game not started
+        if (false == gameState.game_started && false == gameState.game_over) {
+            switch (key) {
+                case GLUT_KEY_F1:
+                    std::cout << "Signal to start game.. " << std::endl;
+                    gameState.game_started = true;
+                    
+                    break;
+            }
+
+            glutPostRedisplay();
+            return;
+        }
+
+        // In game play
+        if (true == gameState.game_started && false == gameState.game_over) {
+            switch (key) {
+                case GLUT_KEY_F1:
+                    std::cout << "Signal to end game.. " << std::endl;
+                    gameState.game_over = true;
+                    break;
+            }
+            glutPostRedisplay();
+        }
+    }
+
+
     void handleKeypress(unsigned char key, int x, int y) {
 
         std::cout << "Key Pressed: " << key << std::endl;
 
         // Start the game!
-        if (gameState.game_started == false && gameState.game_over == false ) {
-            gameState.game_started == true;
-            return;
-        }
+        // if (gameState.game_started == false && gameState.game_over == false ) {
+        //     gameState.game_started == true;
+        //     return;
+        // }
 
-        if (gameState.game_started == false && gameState.game_over == true ) {
-            // something went wrong
-            exit(0);
-        }
+        // if (gameState.game_started == false && gameState.game_over == true ) {
+        //     // something went wrong
+        //     //exit(0);
+        // }
 
-        // Game has started!
-        if (gameState.game_started == true && gameState.game_over == false ) {
-            switch(key) {
-                case GLUT_KEY_F1:
-                    gameState.game_over = true;
-                    // signal end game
-                    break;
-            }
-            return;
-        }
+        // // Game has started!
+        // if (gameState.game_started == true && gameState.game_over == false ) {
+        //     // switch(key) {
 
-        // game has ended, so any key sghould close the game
-        if (gameState.game_started == true && gameState.game_over == true) {
-            exit(0);
-        }
+        //     //         break;
+        //     // }
+        //     return;
+        // }
 
-        std::cout << "Why are we here...\n";
+        // // game has ended, so any key sghould close the game
+        // if (gameState.game_started == true && gameState.game_over == true) {
+        //    // exit(0);
+        // }
+
+        //std::cout << "Why are we here...\n";
     }
 }

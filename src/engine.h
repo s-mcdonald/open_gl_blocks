@@ -20,6 +20,8 @@ namespace SamMcDonald::Blocks {
      */
     void doDrawText(const char* text, Point p);
 
+    void handleSpecialKeypress(int key, int x, int y);
+
     void handleKeypress(unsigned char key, int x, int y);
 }
 

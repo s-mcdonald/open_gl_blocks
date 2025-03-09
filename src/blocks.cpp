@@ -42,6 +42,9 @@
 short game_execution_time = 0;
 
 void display() {
+
+    // std::cout << "display() called" << std::endl;
+
     // Refresh the screen buffer
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -49,7 +52,6 @@ void display() {
     if (gameState.game_over) {
         SamMcDonald::Blocks::doGameOver();
         glutSwapBuffers();
-        glutPostRedisplay();
         return;
     }
 
@@ -61,23 +63,21 @@ void display() {
     p_center_screen.y = HEIGHT / 2;
 
     // game not started
-    if (gameState.game_started == false && gameState.game_over == false) {
+    if (false == gameState.game_started && false == gameState.game_over) {
         glColor3f(0.0f, 1.0f, 0.0f);
-        SamMcDonald::Blocks::doDrawText("Press any key to begin", p_center_screen);
+        SamMcDonald::Blocks::doDrawText("Press F1 to start game.", p_center_screen);
         glutSwapBuffers();
-        glutPostRedisplay();
         return;
     }
 
     // in game play here
-    if (gameState.game_started && gameState.game_over == false) {
-        SamMcDonald::Blocks::doDrawText("Game has started", p_center_screen);
+    if (true == gameState.game_started && false == gameState.game_over) {
+        // now if we detect "s" for spawn we should do this..
         Point p;
         p.x = 140;
         p.x = 150;
         SamMcDonald::Blocks::doSpawnBlock(p);
         glutSwapBuffers();
-        glutPostRedisplay();
         return;
     }
 
@@ -89,7 +89,26 @@ void display() {
         return;
     }
 
-    SamMcDonald::Blocks::doDrawText("This is something else", p_center_screen);
+    //SamMcDonald::Blocks::doDrawText("This is something else", p_center_screen);
+}
+
+
+void game_timer(int value) {
+    
+    glutPostRedisplay();
+
+    glutTimerFunc(1000, game_timer, 0);
+}
+
+void game_timer() {
+    
+    if (true == gameState.game_over) {
+        glutPostRedisplay();
+        return;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(100, game_timer, 0);
 }
 
 
@@ -100,17 +119,20 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(WIDTH, HEIGHT);
-    glutCreateWindow(game_title);
+    glutCreateWindow("Blocks");
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(0, WIDTH, 0, HEIGHT);
 
     // we could introduce this later for time control,
-   // glutTimerFunc(GAME_INTERVAL, game_timer, 0);
+    //glutTimerFunc(GAME_INTERVAL, game_timer, 0);
+
+    game_timer();
 
     glutDisplayFunc(display);
     glutKeyboardFunc(SamMcDonald::Blocks::handleKeypress); 
+    glutSpecialFunc(SamMcDonald::Blocks::handleSpecialKeypress);
 
     glutMainLoop();
     SamMcDonald::Blocks::doGameOver();

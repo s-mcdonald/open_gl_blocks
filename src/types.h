@@ -28,8 +28,9 @@ typedef struct Block {
 typedef struct GameState {
     bool game_over = false;
     bool game_started = false;
-} GameState;
+};
 
-static GameState gameState;
+extern struct GameState gameState;
+
 
 #endif /* BLOCKS_TYPES_H */
