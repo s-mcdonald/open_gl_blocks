@@ -69,8 +69,10 @@ void display() {
 
     // in game play here
     if (true == gameState.game_started && false == gameState.game_over) {
-        for (auto s : spawners)
-            SamMcDonald::Blocks::doSpawnBlock(s);
+        SamMcDonald::Blocks::renderVBO();
+        glutSwapBuffers();
+        // for (auto s : spawners)
+            // SamMcDonald::Blocks::doSpawnBlock(s);
         
         return;
     }
@@ -116,12 +118,16 @@ int main(int argc, char** argv) {
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Blocks");
 
+    SamMcDonald::Blocks::loadGLVBOFunctions();
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(0, WIDTH, 0, HEIGHT);
 
+    SamMcDonald::Blocks::initializeVertexBufferObject();
+
     // we could introduce this later for time control,
-    glutTimerFunc(GAME_INTERVAL, game_timer, 0);
+    //glutTimerFunc(GAME_INTERVAL, game_timer, 0);
 
     //game_timer();
 

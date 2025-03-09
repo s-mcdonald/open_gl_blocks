@@ -7,6 +7,25 @@
 
 namespace SamMcDonald::Blocks {
 
+    /// 
+    /// VBuffs
+    ///
+
+    void loadGLVBOFunctions();
+
+    void initializeVertexBufferObject();
+
+    void updateVertexBufferObject(const std::vector<Block>& spawners);
+
+    void updateVertexBufferObject(const Block& spawner);
+
+    void renderVBO();
+
+    /// 
+    /// Game code
+    ///
+
+
     void doClearScreen();
 
     void doStartGame();

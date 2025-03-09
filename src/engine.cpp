@@ -1,12 +1,94 @@
 #include <iostream>
+#include <vector>
+
 #include <GL/glut.h>
 
+#include <GL/glx.h>
+
+#include "constants.h"
 #include "engine.h"
 #include "types.h"
-#include "constants.h"
 #include "keys.h"
 
 namespace SamMcDonald::Blocks {
+
+    // found vertex buffer might help with rendering
+    // https://en.wikipedia.org/wiki/Vertex_buffer_object
+    // https://www.khronos.org/opengl/wiki/Buffer_Object
+    GLuint vbo;
+
+    // Function pointers for VBO-related functions api entry points
+    PFNGLGENBUFFERSARBPROC glGenBuffers = nullptr;
+    PFNGLBINDBUFFERARBPROC glBindBuffer = nullptr;
+    PFNGLBUFFERDATAARBPROC glBufferData = nullptr;
+
+    /**
+     * Load openGLs vertext buffer functions so we dont need GLad.
+     * we should prob extract this to a diff cpp file/namespace
+     */
+    void loadGLVBOFunctions() {
+        glGenBuffers = (PFNGLGENBUFFERSARBPROC)glXGetProcAddressARB((const GLubyte*)"glGenBuffers");
+        glBindBuffer = (PFNGLBINDBUFFERARBPROC)glXGetProcAddressARB((const GLubyte*)"glBindBuffer");
+        glBufferData = (PFNGLBUFFERDATAARBPROC)glXGetProcAddressARB((const GLubyte*)"glBufferData");
+
+        if (!glGenBuffers || !glBindBuffer || !glBufferData) {
+            std::cerr << "Failed to load VBO functions" << std::endl;
+            exit(1);
+        }
+    }
+
+    void initializeVertexBufferObject() {
+        glGenBuffers(1, &vbo);
+    }
+
+    void updateVertexBufferObject(const std::vector<Block>& spawners) {
+        std::vector<GLfloat> vertices;
+        for (const auto& spawner : spawners) {
+            GLfloat x = static_cast<GLfloat>(spawner.xy.x);
+            GLfloat y = static_cast<GLfloat>(spawner.xy.y);
+            GLfloat size = static_cast<GLfloat>(BLOCK_SIZE);
+
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(x + size);
+            vertices.push_back(y);
+            vertices.push_back(x + size);
+            vertices.push_back(y + size);
+            vertices.push_back(x);
+            vertices.push_back(y + size);
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_DYNAMIC_DRAW);
+    }
+
+    void updateVertexBufferObject(const Block& spawner) {
+        std::vector<GLfloat> vertices;
+
+        GLfloat x = static_cast<GLfloat>(spawner.xy.x);
+        GLfloat y = static_cast<GLfloat>(spawner.xy.y);
+        GLfloat size = static_cast<GLfloat>(BLOCK_SIZE);
+
+        vertices.push_back(x);
+        vertices.push_back(y);
+        vertices.push_back(x + size);
+        vertices.push_back(y);
+        vertices.push_back(x + size);
+        vertices.push_back(y + size);
+        vertices.push_back(x);
+        vertices.push_back(y + size);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_DYNAMIC_DRAW);
+    }
+
+    void renderVBO() {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, 0, nullptr);
+        glDrawArrays(GL_QUADS, 0, spawners.size() * 4);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
 
     void doClearScreen()
     {
@@ -80,9 +162,6 @@ namespace SamMcDonald::Blocks {
 
     void handleSpecialKeypress(int key, int x, int y) {
 
-        std::cout << "Key Pressed: " << key << std::endl;
-
-        // Game not started
         if (false == gameState.game_started && false == gameState.game_over) {
             switch (key) {
                 case GLUT_KEY_F1:
@@ -92,7 +171,6 @@ namespace SamMcDonald::Blocks {
             }
 
             glutPostRedisplay();
-            //gameState.game_started = false;
             return;
         }
 
@@ -110,7 +188,6 @@ namespace SamMcDonald::Blocks {
 
     void handleKeypress(unsigned char key, int x, int y) {
 
-        glutPostRedisplay();
         // // Game has started!
         if (gameState.game_started == true && gameState.game_over == false ) {
             switch(key) {
@@ -124,11 +201,12 @@ namespace SamMcDonald::Blocks {
                     Block spawner;
                     spawner.xy = spawn_location;
                     spawner.value = 100;
-                    spawners.emplace_back(spawner);
+                    spawners.push_back(spawner);
+
+                    updateVertexBufferObject(spawners);
+                    glutPostRedisplay();
                     break;
             }
         }
-
-        glutPostRedisplay();
     }
 }
