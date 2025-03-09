@@ -13,7 +13,7 @@ namespace SamMcDonald::Blocks {
 
     void doGameOver();
 
-    void doSpawnBlock(Point p);
+    void doSpawnBlock(const Block& spawner);
 
     /**
      * Use oGL to display text on screen ;;

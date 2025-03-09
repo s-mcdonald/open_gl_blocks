@@ -4,6 +4,7 @@
 #include "engine.h"
 #include "types.h"
 #include "constants.h"
+#include "keys.h"
 
 namespace SamMcDonald::Blocks {
 
@@ -29,19 +30,19 @@ namespace SamMcDonald::Blocks {
         doDrawText("Game Over", p);
     }
 
-    void doSpawnBlock(Point p)
+    void doSpawnBlock(const Block& spawner)
     {
         glColor3f(1.0f, 0.0f, 0.0f);
 
         glBegin(GL_QUADS);
-        glVertex2i(p.x, p.y);
-        glVertex2i(p.x + BLOCK_SIZE, p.y);
-        glVertex2i(p.x + BLOCK_SIZE, p.y + BLOCK_SIZE);
-        glVertex2i(p.x, p.y + BLOCK_SIZE);
+        glVertex2i(spawner.xy.x, spawner.xy.y);
+        glVertex2i(spawner.xy.x + BLOCK_SIZE, spawner.xy.y);
+        glVertex2i(spawner.xy.x + BLOCK_SIZE, spawner.xy.y + BLOCK_SIZE);
+        glVertex2i(spawner.xy.x, spawner.xy.y + BLOCK_SIZE);
         glEnd();
         glutSwapBuffers();
-    }
 
+    }
 
     void doDrawText(const char* text, Point p) {
         glRasterPos2i(p.x, p.y);
@@ -87,11 +88,11 @@ namespace SamMcDonald::Blocks {
                 case GLUT_KEY_F1:
                     std::cout << "Signal to start game.. " << std::endl;
                     gameState.game_started = true;
-                    
                     break;
             }
 
             glutPostRedisplay();
+            //gameState.game_started = false;
             return;
         }
 
@@ -107,36 +108,27 @@ namespace SamMcDonald::Blocks {
         }
     }
 
-
     void handleKeypress(unsigned char key, int x, int y) {
 
-        std::cout << "Key Pressed: " << key << std::endl;
-
-        // Start the game!
-        // if (gameState.game_started == false && gameState.game_over == false ) {
-        //     gameState.game_started == true;
-        //     return;
-        // }
-
-        // if (gameState.game_started == false && gameState.game_over == true ) {
-        //     // something went wrong
-        //     //exit(0);
-        // }
-
+        glutPostRedisplay();
         // // Game has started!
-        // if (gameState.game_started == true && gameState.game_over == false ) {
-        //     // switch(key) {
+        if (gameState.game_started == true && gameState.game_over == false ) {
+            switch(key) {
+                case GAME_KEY_S:
+                case GAME_KEY_s:
+                    srand(time(0));
+                    std::cout << "Spawn " << std::endl;
+                    Point spawn_location; // we need to randomly generate these
+                    spawn_location.x = (rand() % (WIDTH / BLOCK_SIZE)) * BLOCK_SIZE;
+                    spawn_location.y = (rand() % (HEIGHT / BLOCK_SIZE)) * BLOCK_SIZE;
+                    Block spawner;
+                    spawner.xy = spawn_location;
+                    spawner.value = 100;
+                    spawners.emplace_back(spawner);
+                    break;
+            }
+        }
 
-        //     //         break;
-        //     // }
-        //     return;
-        // }
-
-        // // game has ended, so any key sghould close the game
-        // if (gameState.game_started == true && gameState.game_over == true) {
-        //    // exit(0);
-        // }
-
-        //std::cout << "Why are we here...\n";
+        glutPostRedisplay();
     }
 }

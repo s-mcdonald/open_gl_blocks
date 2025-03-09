@@ -42,9 +42,6 @@
 short game_execution_time = 0;
 
 void display() {
-
-    // std::cout << "display() called" << std::endl;
-
     // Refresh the screen buffer
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -72,12 +69,9 @@ void display() {
 
     // in game play here
     if (true == gameState.game_started && false == gameState.game_over) {
-        // now if we detect "s" for spawn we should do this..
-        Point p;
-        p.x = 140;
-        p.x = 150;
-        SamMcDonald::Blocks::doSpawnBlock(p);
-        glutSwapBuffers();
+        for (auto s : spawners)
+            SamMcDonald::Blocks::doSpawnBlock(s);
+        
         return;
     }
 
@@ -89,7 +83,8 @@ void display() {
         return;
     }
 
-    //SamMcDonald::Blocks::doDrawText("This is something else", p_center_screen);
+    glutSwapBuffers();
+
 }
 
 
@@ -126,9 +121,9 @@ int main(int argc, char** argv) {
     gluOrtho2D(0, WIDTH, 0, HEIGHT);
 
     // we could introduce this later for time control,
-    //glutTimerFunc(GAME_INTERVAL, game_timer, 0);
+    glutTimerFunc(GAME_INTERVAL, game_timer, 0);
 
-    game_timer();
+    //game_timer();
 
     glutDisplayFunc(display);
     glutKeyboardFunc(SamMcDonald::Blocks::handleKeypress); 
