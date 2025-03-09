@@ -17,9 +17,7 @@ namespace SamMcDonald::Blocks {
 
     void updateVertexBufferObject(const std::vector<Block>& spawners);
 
-    void updateVertexBufferObject(const Block& spawner);
-
-    void renderVBO();
+    void renderVBOSpawners();
 
     /// 
     /// Game code
@@ -42,6 +40,15 @@ namespace SamMcDonald::Blocks {
     void handleSpecialKeypress(int key, int x, int y);
 
     void handleKeypress(unsigned char key, int x, int y);
+
+
+    ///
+    /// Collision Detection
+    ///
+    bool pointWillCollide(Point p)
+    {
+        return true;
+    }
 }
 
 #endif /* BLOCKS_ENGINE_H */

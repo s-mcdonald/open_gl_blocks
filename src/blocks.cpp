@@ -69,11 +69,8 @@ void display() {
 
     // in game play here
     if (true == gameState.game_started && false == gameState.game_over) {
-        SamMcDonald::Blocks::renderVBO();
-        glutSwapBuffers();
-        // for (auto s : spawners)
-            // SamMcDonald::Blocks::doSpawnBlock(s);
-        
+        SamMcDonald::Blocks::renderVBOSpawners();
+        glutSwapBuffers();        
         return;
     }
 

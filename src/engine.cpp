@@ -1,8 +1,9 @@
 #include <iostream>
 #include <vector>
+#include <random>
+#include <typeinfo>
 
 #include <GL/glut.h>
-
 #include <GL/glx.h>
 
 #include "constants.h"
@@ -48,45 +49,62 @@ namespace SamMcDonald::Blocks {
             GLfloat y = static_cast<GLfloat>(spawner.xy.y);
             GLfloat size = static_cast<GLfloat>(BLOCK_SIZE);
 
+            // Add vertex positions and color information
+            GLfloat r = spawner.is_enemy ? 1.0f : 0.0f;
+            GLfloat g = 0.0f;
+            GLfloat b = spawner.is_enemy ? 0.0f : 1.0f;
+
+            // Bottom-left
             vertices.push_back(x);
             vertices.push_back(y);
+            vertices.push_back(r);
+            vertices.push_back(g);
+            vertices.push_back(b);
+
+            // Bottom-right
             vertices.push_back(x + size);
             vertices.push_back(y);
+            vertices.push_back(r);
+            vertices.push_back(g);
+            vertices.push_back(b);
+
+            // Top-right
             vertices.push_back(x + size);
             vertices.push_back(y + size);
+            vertices.push_back(r);
+            vertices.push_back(g);
+            vertices.push_back(b);
+
+            // Top-left
             vertices.push_back(x);
             vertices.push_back(y + size);
+            vertices.push_back(r);
+            vertices.push_back(g);
+            vertices.push_back(b);
+            
+        }
+    
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+    }
+
+    void renderVBOSpawners() {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+        // Set the vertex pointer
+        glVertexPointer(2, GL_FLOAT, 5 * sizeof(GLfloat), (void*)0);
+
+        // Set the color pointer
+        glColorPointer(3, GL_FLOAT, 5 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+
+        // Draw each block
+        for (size_t i = 0; i < spawners.size(); ++i) {
+            glDrawArrays(GL_QUADS, i * 4, 4);
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_DYNAMIC_DRAW);
-    }
-
-    void updateVertexBufferObject(const Block& spawner) {
-        std::vector<GLfloat> vertices;
-
-        GLfloat x = static_cast<GLfloat>(spawner.xy.x);
-        GLfloat y = static_cast<GLfloat>(spawner.xy.y);
-        GLfloat size = static_cast<GLfloat>(BLOCK_SIZE);
-
-        vertices.push_back(x);
-        vertices.push_back(y);
-        vertices.push_back(x + size);
-        vertices.push_back(y);
-        vertices.push_back(x + size);
-        vertices.push_back(y + size);
-        vertices.push_back(x);
-        vertices.push_back(y + size);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_DYNAMIC_DRAW);
-    }
-
-    void renderVBO() {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glVertexPointer(2, GL_FLOAT, 0, nullptr);
-        glDrawArrays(GL_QUADS, 0, spawners.size() * 4);
+        glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_VERTEX_ARRAY);
     }
 
@@ -112,20 +130,6 @@ namespace SamMcDonald::Blocks {
         doDrawText("Game Over", p);
     }
 
-    void doSpawnBlock(const Block& spawner)
-    {
-        glColor3f(1.0f, 0.0f, 0.0f);
-
-        glBegin(GL_QUADS);
-        glVertex2i(spawner.xy.x, spawner.xy.y);
-        glVertex2i(spawner.xy.x + BLOCK_SIZE, spawner.xy.y);
-        glVertex2i(spawner.xy.x + BLOCK_SIZE, spawner.xy.y + BLOCK_SIZE);
-        glVertex2i(spawner.xy.x, spawner.xy.y + BLOCK_SIZE);
-        glEnd();
-        glutSwapBuffers();
-
-    }
-
     void doDrawText(const char* text, Point p) {
         glRasterPos2i(p.x, p.y);
         while (*text) {
@@ -134,30 +138,8 @@ namespace SamMcDonald::Blocks {
         }
     }
 
-        /**
-     * GLUT API macro definitions -- the special key codes:
-     *
-     * GLUT_KEY_F1                        0x0001
-     * GLUT_KEY_F2                        0x0002
-     * GLUT_KEY_F3                        0x0003
-     * GLUT_KEY_F4                        0x0004
-     * GLUT_KEY_F5                        0x0005
-     * GLUT_KEY_F6                        0x0006
-     * GLUT_KEY_F7                        0x0007
-     * GLUT_KEY_F8                        0x0008
-     * GLUT_KEY_F9                        0x0009
-     * GLUT_KEY_F10                       0x000A
-     * GLUT_KEY_F11                       0x000B
-     * GLUT_KEY_F12                       0x000C
-     * GLUT_KEY_LEFT                      0x0064
-     * GLUT_KEY_UP                        0x0065
-     * GLUT_KEY_RIGHT                     0x0066
-     * GLUT_KEY_DOWN                      0x0067
-     * GLUT_KEY_PAGE_UP                   0x0068
-     * GLUT_KEY_PAGE_DOWN                 0x0069
-     * GLUT_KEY_HOME                      0x006A
-     * GLUT_KEY_END                       0x006B
-     * GLUT_KEY_INSERT                    0x006C
+    /**
+     * GLUT API macro definitions --  https://www.glfw.org/docs/3.3/group__keys.html
      */
 
     void handleSpecialKeypress(int key, int x, int y) {
@@ -193,20 +175,34 @@ namespace SamMcDonald::Blocks {
             switch(key) {
                 case GAME_KEY_S:
                 case GAME_KEY_s:
+                    auto is_friend = ((rand() % 2) + 1 ==  2);
+
                     srand(time(0));
                     std::cout << "Spawn " << std::endl;
                     Point spawn_location; // we need to randomly generate these
                     spawn_location.x = (rand() % (WIDTH / BLOCK_SIZE)) * BLOCK_SIZE;
                     spawn_location.y = (rand() % (HEIGHT / BLOCK_SIZE)) * BLOCK_SIZE;
+
                     Block spawner;
                     spawner.xy = spawn_location;
-                    spawner.value = 100;
-                    spawners.push_back(spawner);
+                    spawner.value = is_friend ? 100 : -200;
+                    spawner.is_enemy = !is_friend;
 
+                    spawners.push_back(spawner);
                     updateVertexBufferObject(spawners);
                     glutPostRedisplay();
                     break;
             }
         }
+    }
+
+    bool pointWillCollide(Point p)
+    {
+        return true;
+    }
+
+    void doCollisionAnimation()
+    {
+        //
     }
 }
